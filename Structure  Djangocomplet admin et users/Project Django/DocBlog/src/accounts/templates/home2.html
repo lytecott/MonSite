@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="dashboard-page">
+
+```
+<div class="dashboard-container">
+
+    <!-- En-tête -->
+    <div class="dashboard-header">
+
+        <div class="welcome-box">
+            <span class="welcome-label">ESPACE PERSONNEL</span>
+
+            <h1>
+                Bienvenue
+                <strong>{{ user.first_name|default:user.username }}</strong> 👋
+            </h1>
+
+            <p>
+                Retrouvez rapidement vos informations personnelles
+                et les principales fonctionnalités de votre compte.
+            </p>
+        </div>
+
+        <!-- Avatar -->
+        <div class="dashboard-avatar">
+
+            {% if user.profile.profile_picture %}
+                <img
+                    src="{{ user.profile.profile_picture.url }}"
+                    alt="Photo de {{ user.username }}"
+                >
+            {% else %}
+                <div class="avatar-placeholder">
+                    {{ user.username|first|upper }}
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- Statut utilisateur -->
+    <div class="user-status">
+
+        <div class="status-icon">
+            ✓
+        </div>
+
+        <div>
+            <strong>Compte connecté</strong>
+            <span>
+                {% if user.is_staff %}
+                    Administrateur
+                {% else %}
+                    Membre
+                {% endif %}
+            </span>
+        </div>
+
+    </div>
+
+
+    <!-- Titre des fonctionnalités -->
+    <div class="section-title">
+
+        <div>
+            <span>ACCÈS RAPIDE</span>
+            <h2>Que souhaitez-vous faire ?</h2>
+        </div>
+
+    </div>
+
+
+    <!-- Cartes -->
+    <div class="dashboard-grid">
+
+        <!-- Profil -->
+        <a href="{% url 'profile' %}" class="dashboard-card">
+
+            <div class="card-icon profile-icon">
+                👤
+            </div>
+
+            <div class="card-content">
+                <h3>Mon profil</h3>
+
+                <p>
+                    Consultez et modifiez vos informations personnelles.
+                </p>
+
+                <span class="card-link">
+                    Accéder →
+                </span>
+            </div>
+
+        </a>
+
+
+        <!-- Mot de passe -->
+        <a href="{% url 'change_password' %}" class="dashboard-card">
+
+            <div class="card-icon password-icon">
+                🔐
+            </div>
+
+            <div class="card-content">
+                <h3>Mot de passe</h3>
+
+                <p>
+                    Modifiez votre mot de passe pour sécuriser votre compte.
+                </p>
+
+                <span class="card-link">
+                    Modifier →
+                </span>
+            </div>
+
+        </a>
+
+
+        <!-- Administration -->
+        {% if user.is_staff %}
+
+        <a href="{% url 'admin_home' %}" class="dashboard-card admin-card">
+
+            <div class="card-icon admin-icon">
+                ⚙️
+            </div>
+
+            <div class="card-content">
+                <h3>Administration</h3>
+
+                <p>
+                    Gérez les utilisateurs, les contenus et les paramètres.
+                </p>
+
+                <span class="card-link">
+                    Ouvrir →
+                </span>
+            </div>
+
+        </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Informations -->
+    <div class="dashboard-info">
+
+        <div class="info-item">
+            <span class="info-number">01</span>
+
+            <div>
+                <strong>Profil</strong>
+                <p>Gérez vos informations personnelles.</p>
+            </div>
+        </div>
+
+        <div class="info-item">
+            <span class="info-number">02</span>
+
+            <div>
+                <strong>Sécurité</strong>
+                <p>Protégez votre compte avec un mot de passe sécurisé.</p>
+            </div>
+        </div>
+
+        {% if user.is_staff %}
+
+        <div class="info-item">
+            <span class="info-number">03</span>
+
+            <div>
+                <strong>Administration</strong>
+                <p>Accédez aux fonctionnalités réservées aux administrateurs.</p>
+            </div>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+```
+
+</section>
+
+{% endblock %}

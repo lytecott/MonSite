@@ -1,0 +1,89 @@
+
+/*******************************************************************/
+                       WINDOWS  Visual studio code ou pycharm
+/*******************************************************************/
+Aller dans l'extension installer Django
+Bureau créer un dossier mkdir DJANGO et ouvrir terminal
+python --version
+which python
+python3.14 -m venv .env
+ls -a
+source .env/bin/activate  ou bien     .\.env\Script\activate
+pip install --upgrade pip
+pip install django 
+python -m django --version
+pip install django --upgrade 
+
+/*************************************/
+pip freeze > requirements.txt
+cat requirements.txt
+pip uninstall django
+pip install -r requirements.txt 
+/***************************************/
+
+teminal: 
+django-admin startproject DocBlog
+cd DocBlog
+mv DocBlog  src 
+cd src 
+
+python manage.py migrate
+python manage.py runserver
+python manage.py startapp home
+python manage.py createsuperuser
+python manage.py changepassword zara
+
+
+/********************************************/
+src/DocBlog/
+créer views.py
+	from django.shortcuts import render 
+	
+	def index(request):
+		return render(request, "index.html")
+/*********************************************/
+src/DocBlog/urls.py
+	from .views import index
+	
+	urlpatterns =[
+		path('', index, name="index"),
+	]
+/********************************************/
+			Templates   index.html 
+/********************************************/
+src/DocBlog/
+créer dossier mkdir template 
+	créer index.html
+Aller right click sur templace : copy path et coller sur 
+Aller sur 
+/***************************************************/
+src/DocBlog/settings.py/ et coller sur DIRS
+	Templates = [
+		#DIRS : ['/Users/LYTEC/Desktop/Project Django/DocBlog/src/DocBlog/templates'],
+		DIRS : [os.path.join(BASE_DIR, "DocBlog/templates")]       //ajouter import os 
+	]
+/********************************************************************************************/
+					CSS/style.css
+/********************************************************************************************/
+src/DocBlog/
+créer dossier mkdir static   ----> pour mettre les photos,css, autres dossiers
+
+page html on doit ajouter 2 choses:
+{% load static %}
+<!Doctype html>
+ <html>
+	<head>
+		<link rel="stylesheet" href="{% static 'css/style.css' %}">
+/*******************************/
+src/DocBlog/settings.py (STATIC_URL = 'static/')-----> dernier ajouter 
+	STATICFILES_DIRS = [
+		os.path.join(BASE_DIR, "DocBlog/static")
+	]
+	
+/************************************************************/
+                image
+/************************************************************/
+<div class="profil">
+      <img src="{% static 'myphoto.png' %}" alt="Photo de profil de Abakar Adoum Hammat" class="photo">
+</div>
+/**************************************************************/

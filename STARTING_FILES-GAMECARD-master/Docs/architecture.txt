@@ -1,0 +1,31 @@
+lytecott/
+├── index.html  ok
+├── ACCOUNT/ ok
+│   ├── login.php   ok
+│   ├── signup.php   ok
+│   ├── account.php   ok    # Page de profil utilisateur
+│   └── admin.php    ok     # Page d'administration (réservée à l'admin)
+├── includes/   ok
+│   ├── navbar.php ok
+│   ├── dbh.ext.php  ok dbh.inc.php      # Connexion à la base de données
+│   └── footer.php  ok
+├── css/
+│   └── styles.css  ok
+├── images/
+│   ├── logo.jpg  ok
+│   └── profiles/      ok   # Dossier pour stocker les photos de profil
+├── extern/  
+│   ├── login.ext.php  ok
+│   ├── signup.ext.php  ok 
+│   ├── logout.ext.php  ok 
+│   ├── admin/
+│   │   ├── admin.php
+│   │   ├── delete_user.ext.php   ok  # Supprimer un utilisateur
+│   │   ├── update_password.ext.php ok # Changer le mot de passe (admin)
+│   │   └── update_role.ext.php    ok  # Changer le rôle (admin)
+│   └── user/
+│       ├── update_password.ext.php ok # Changer son propre mot de passe
+│       └── update_profile.ext.php  ok # Mettre à jour la photo de profil
+│       ├── update_role.ext.php
+│       └──  account.php
+└── terms.php

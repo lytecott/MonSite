@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/profile.css' %}"> {% endblock %}
+
+{% block content %}
+
+<section class="profile-page">
+
+<div class="profile-container">
+
+    <!-- =================================================
+         TITRE
+         ================================================= -->
+
+    <div class="profile-title">
+
+        <span>MON ESPACE</span>
+
+        <h1>Mon profil</h1>
+
+        <p>
+            Consultez et gérez vos informations personnelles.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         CARTE PRINCIPALE
+         ================================================= -->
+
+    <div class="profile-card">
+
+        <!-- Bannière -->
+
+        <div class="profile-banner"></div>
+
+
+        <!-- =================================================
+             IDENTITÉ
+             ================================================= -->
+
+        <div class="profile-identity">
+
+            <div class="profile-photo-wrapper">
+
+                {% if profile.profile_picture %}
+
+                    <img
+                        src="{{ profile.profile_picture.url }}"
+                        alt="Photo de profil de {{ user.username }}"
+                        class="profile-photo"
+                    >
+
+                {% else %}
+
+                    <div class="profile-photo-placeholder">
+                        {{ user.username|first|upper }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="profile-identity-info">
+
+                <h2>
+                    {% if user.get_full_name %}
+                        {{ user.get_full_name }}
+                    {% else %}
+                        {{ user.username }}
+                    {% endif %}
+                </h2>
+
+                <p>
+                    @{{ user.username }}
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CONTENU
+             ================================================= -->
+
+        <div class="profile-content">
+
+            <div class="profile-section-title">
+
+                <h3>
+                    Informations personnelles
+                </h3>
+
+            </div>
+
+
+            <!-- =================================================
+                 FORMULAIRE
+                 ================================================= -->
+
+            <form
+                method="post"
+                enctype="multipart/form-data"
+                class="profile-form"
+            >
+
+                {% csrf_token %}
+
+
+                <!-- Prénom -->
+
+                <div class="profile-field">
+
+                    <label for="first_name">
+                        Prénom
+                    </label>
+
+                    <input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        value="{{ user.first_name }}"
+                        placeholder="Votre prénom"
+                    >
+
+                </div>
+
+
+                <!-- Nom -->
+
+                <div class="profile-field">
+
+                    <label for="last_name">
+                        Nom
+                    </label>
+
+                    <input
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        value="{{ user.last_name }}"
+                        placeholder="Votre nom"
+                    >
+
+                </div>
+
+
+                <!-- Nom utilisateur -->
+
+                <div class="profile-field">
+
+                    <label for="username">
+                        Nom d'utilisateur
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        value="{{ user.username }}"
+                        disabled
+                    >
+
+                    <small class="profile-help">
+                        Le nom d'utilisateur ne peut pas être modifié ici.
+                    </small>
+
+                </div>
+
+
+                <!-- Email -->
+
+                <div class="profile-field">
+
+                    <label for="email">
+                        Adresse e-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ user.email }}"
+                        placeholder="exemple@email.com"
+                    >
+
+                </div>
+
+
+                <!-- Bio -->
+
+                {% if profile.bio is not None %}
+
+                <div class="profile-field full-width">
+
+                    <label for="bio">
+                        À propos de moi
+                    </label>
+
+                    <textarea
+                        id="bio"
+                        name="bio"
+                        placeholder="Présentez-vous en quelques mots..."
+                    >{{ profile.bio }}</textarea>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- Photo -->
+
+                <div class="profile-field full-width">
+
+                    <label for="profile_picture">
+                        Photo de profil
+                    </label>
+
+                    <div class="profile-upload">
+
+                        <input
+                            type="file"
+                            id="profile_picture"
+                            name="profile_picture"
+                            accept="image/*"
+                        >
+
+                    </div>
+
+                    <small class="profile-help">
+                        JPG, JPEG, PNG ou WEBP. Choisissez une image claire.
+                    </small>
+
+                </div>
+
+
+                <!-- =================================================
+                     BOUTONS
+                     ================================================= -->
+
+                <div class="profile-actions">
+
+                    <a
+                        href="{% url 'home2' %}"
+                        class="profile-button profile-button-secondary"
+                    >
+                        Annuler
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="profile-button profile-button-primary"
+                    >
+                        Enregistrer les modifications
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <!-- =================================================
+                 INFORMATIONS DU COMPTE
+                 ================================================= -->
+
+            <div class="profile-account-info">
+
+                <div class="account-info-box">
+
+                    <span>Compte</span>
+
+                    <strong>
+                        {{ user.username }}
+                    </strong>
+
+                </div>
+
+
+                <div class="account-info-box">
+
+                    <span>Statut</span>
+
+                    {% if user.is_staff %}
+
+                        <strong class="profile-badge">
+                            Administrateur
+                        </strong>
+
+                    {% else %}
+
+                        <strong>
+                            Membre
+                        </strong>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="account-info-box">
+
+                    <span>Membre depuis</span>
+
+                    <strong>
+                        {{ user.date_joined|date:"d/m/Y" }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</section>
+
+{% endblock %}

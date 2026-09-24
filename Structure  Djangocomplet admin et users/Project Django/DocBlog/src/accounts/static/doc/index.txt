@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV - Informaticien</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <h1><i class="fas fa-user-tie icon"></i> Abakar - Informaticien</h1>
+            <nav>
+                <div class="nav-container">
+                    <input type="checkbox" id="menu-toggle" aria-label="Menu">
+                    <label for="menu-toggle" class="menu-btn">
+                        <i class="fas fa-bars"></i>
+                    </label>
+                    <ul class="menu">
+                        <li><a href="#general"><i class="fas fa-info-circle icon"></i>Informations générales</a></li>
+                        <li><a href="#formation"><i class="fas fa-graduation-cap icon"></i>Formation</a></li>
+                        <li><a href="#activites"><i class="fas fa-briefcase icon"></i>Activités professionnelles</a></li>
+                        <li><a href="#divers"><i class="fas fa-star icon"></i>Autres informations</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <article>
+            <h2>Curriculum Vitae</h2>
+
+            <div class="profil">
+                <img src="myphoto.png" alt="Photo de profil de Hammat" class="photo">
+            </div>
+
+            <section id="general">
+                <h3><i class="fas fa-id-card icon"></i>Informations générales</h3>
+                <dl>
+                    <dt><i class="fas fa-user icon"></i>Nom et prénom</dt>
+                    <dd>Abakar Adoum Hammat</dd>
+
+                    <dt><i class="fas fa-venus-mars icon"></i>Sexe</dt>
+                    <dd>Masculin</dd>
+
+                    <dt><i class="fas fa-birthday-cake icon"></i>Date de naissance</dt>
+                    <dd>15 janvier 1988</dd>
+
+                    <dt><i class="fas fa-flag icon"></i>Nationalité</dt>
+                    <dd>Belge</dd>
+
+                    <dt><i class="fas fa-map-marker-alt icon"></i>Adresse</dt>
+                    <dd>Rue James ensor 52 boite 10, 1070 Bruxelles</dd>
+
+                    <dt><i class="fas fa-phone icon"></i>Téléphone</dt>
+                    <dd>+32 493 93 34 84</dd>
+
+                    <dt><i class="fas fa-envelope icon"></i>Email</dt>
+                    <dd>
+                        <a href="mailto:lytecott@hotmail.com">lytecott@hotmail.com</a>
+                    </dd>
+                </dl>
+            </section>
+
+            <section id="formation">
+                <h3><i class="fas fa-graduation-cap icon"></i>Formation</h3>
+                <dl>
+                    <dt>2021 - 2026</dt>
+                    <dd>
+                        <i class="fas fa-university icon"></i>Licence en Informatique,
+                        spécialisation Systèmes et Réseaux.
+                    </dd>
+
+                    <dt>1994 - 2009</dt>
+                    <dd>
+                        <i class="fas fa-school icon"></i>Études secondaires,
+                        option Latin - Mathématiques.
+                    </dd>
+                </dl>
+            </section>
+
+            <section id="activites">
+                <h3><i class="fas fa-briefcase icon"></i>Activités professionnelles</h3>
+                <ul class="activites-list">
+                    <li>
+                        <i class="fas fa-code icon"></i>Développement d'applications
+                    </li>
+                    <li>
+                        <i class="fas fa-server icon"></i>Administration de réseaux
+                    </li>
+                    <li>
+                        <i class="fas fa-tools icon"></i>Maintenance informatique
+                    </li>
+                    <li>
+                        <i class="fas fa-shield-alt icon"></i>Sécurité des systèmes
+                    </li>
+                </ul>
+            </section>
+
+            <section id="divers">
+                <h3><i class="fas fa-star icon"></i>Autres informations</h3>
+                <p>
+                    <i class="fas fa-car icon"></i>Permis B,
+                    <i class="fas fa-heart icon"></i>passionné par les nouvelles technologies,
+                    <i class="fas fa-laptop-code icon"></i>les systèmes d'information et
+                    <i class="fas fa-lock icon"></i>la cybersécurité.
+                </p>
+            </section>
+        </article>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 - Abakar Adoum Hammat | <i class="fas fa-code icon"></i> Développé avec passion</p>
+    </footer>
+</body>
+
+</html>

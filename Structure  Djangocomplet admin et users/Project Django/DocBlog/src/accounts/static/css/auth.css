@@ -1,0 +1,807 @@
+
+/* =========================================================
+   DOCBLOG
+   AUTHENTIFICATION
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.auth-page {
+
+    min-height: calc(100vh - 150px);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 50px 20px;
+
+    background:
+        radial-gradient(
+            circle at 15% 20%,
+            rgba(99, 102, 241, 0.16),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(14, 165, 233, 0.14),
+            transparent 32%
+        ),
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #eef2ff
+        );
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+
+/* Décoration du fond */
+
+.auth-page::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    top: -130px;
+    left: -100px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(99, 102, 241, 0.08);
+
+    filter: blur(5px);
+
+    pointer-events: none;
+}
+
+
+.auth-page::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    bottom: -150px;
+    right: -120px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(14, 165, 233, 0.08);
+
+    filter: blur(5px);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.auth-container {
+
+    width: min(440px, 100%);
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   CARTE
+   ========================================================= */
+
+.auth-card {
+
+    padding: 38px;
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border: 1px solid rgba(226, 232, 240, 0.9);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 25px 60px rgba(15, 23, 42, 0.12),
+        0 8px 25px rgba(15, 23, 42, 0.06);
+
+    backdrop-filter: blur(12px);
+
+    animation:
+        authCardAppear 0.5s ease;
+}
+
+
+@keyframes authCardAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.auth-header {
+
+    margin-bottom: 28px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.auth-logo {
+
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    margin: 0 auto 17px;
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #4f46e5
+        );
+
+    color: white;
+
+    font-size: 22px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    box-shadow:
+        0 10px 25px
+        rgba(79, 70, 229, 0.25);
+}
+
+
+/* =========================================================
+   PETIT TITRE
+   ========================================================= */
+
+.auth-header::before {
+
+    content: "ESPACE MEMBRE";
+
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #6366f1;
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   TITRE
+   ========================================================= */
+
+.auth-header h1 {
+
+    margin: 0 0 9px;
+
+    color: #172033;
+
+    font-size: 27px;
+
+    line-height: 1.2;
+
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.auth-header p {
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   FORMULAIRE
+   ========================================================= */
+
+.auth-form {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 19px;
+}
+
+
+/* =========================================================
+   GROUPE
+   ========================================================= */
+
+.form-group {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+/* =========================================================
+   LABEL
+   ========================================================= */
+
+.auth-form label {
+
+    display: block;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    font-weight: 650;
+}
+
+
+/* =========================================================
+   CONTENEUR INPUT
+   ========================================================= */
+
+.input-wrapper {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+}
+
+
+/* =========================================================
+   ICONE INPUT
+   ========================================================= */
+
+.input-icon {
+
+    position: absolute;
+
+    left: 14px;
+
+    z-index: 2;
+
+    font-size: 16px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.auth-form input {
+
+    width: 100%;
+
+    height: 50px;
+
+    padding:
+        0 45px
+        0 43px;
+
+    border: 1px solid #dbe2ea;
+
+    border-radius: 10px;
+
+    outline: none;
+
+    color: #334155;
+
+    background: #f8fafc;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+/* Placeholder */
+
+.auth-form input::placeholder {
+
+    color: #94a3b8;
+}
+
+
+/* Hover */
+
+.auth-form input:hover {
+
+    border-color: #cbd5e1;
+
+}
+
+
+/* Focus */
+
+.auth-form input:focus {
+
+    border-color: #6366f1;
+
+    background: white;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(99, 102, 241, 0.10);
+}
+
+
+/* =========================================================
+   BOUTON AFFICHER MOT DE PASSE
+   ========================================================= */
+
+.password-toggle {
+
+    position: absolute;
+
+    right: 7px;
+
+    width: 36px;
+
+    height: 36px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.password-toggle:hover {
+
+    background: #eef2ff;
+
+    transform: scale(1.05);
+}
+
+
+/* =========================================================
+   BOUTON CONNEXION
+   ========================================================= */
+
+.auth-button {
+
+    width: 100%;
+
+    min-height: 51px;
+
+    margin-top: 4px;
+
+    padding: 12px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #4f46e5
+        );
+
+    color: white;
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 8px 20px
+        rgba(79, 70, 229, 0.22);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+/* Hover */
+
+.auth-button:hover {
+
+    transform: translateY(-2px);
+
+    filter: brightness(1.05);
+
+    box-shadow:
+        0 13px 28px
+        rgba(79, 70, 229, 0.30);
+}
+
+
+/* Click */
+
+.auth-button:active {
+
+    transform: translateY(0);
+
+    box-shadow:
+        0 6px 15px
+        rgba(79, 70, 229, 0.20);
+}
+
+
+/* Flèche */
+
+.button-arrow {
+
+    font-size: 18px;
+
+    transition:
+        transform 0.2s ease;
+}
+
+
+.auth-button:hover .button-arrow {
+
+    transform:
+        translateX(4px);
+}
+
+
+/* =========================================================
+   ERREURS
+   ========================================================= */
+
+.auth-errors {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    padding: 12px 14px;
+
+    margin-bottom: 18px;
+
+    border: 1px solid #fecaca;
+
+    border-radius: 10px;
+
+    background: #fef2f2;
+
+    color: #b91c1c;
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+
+/* Django errorlist */
+
+.auth-errors ul {
+
+    margin: 0;
+
+    padding-left: 17px;
+}
+
+
+.auth-errors li {
+
+    margin-bottom: 3px;
+}
+
+
+.auth-errors li:last-child {
+
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   FOOTER AUTH
+   ========================================================= */
+
+.auth-footer {
+
+    margin-top: 24px;
+
+    padding-top: 20px;
+
+    border-top:
+        1px solid #e5e7eb;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   LIENS
+   ========================================================= */
+
+.auth-footer a {
+
+    color: #4f46e5;
+
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.auth-footer a:hover {
+
+    color: #3730a3;
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   BOUTON INSCRIPTION
+   ========================================================= */
+
+.register-button {
+
+    width: 100%;
+
+    min-height: 47px;
+
+    margin-top: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border: 1px solid #c7d2fe;
+
+    border-radius: 10px;
+
+    background: #eef2ff;
+
+    color: #4338ca;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.register-button:hover {
+
+    background: #e0e7ff;
+
+    border-color: #a5b4fc;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   RETOUR ACCUEIL
+   ========================================================= */
+
+.back-home {
+
+    display: block;
+
+    margin-top: 22px;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 12px;
+
+    text-decoration: none;
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.back-home:hover {
+
+    color: #4f46e5;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 500px) {
+
+    .auth-page {
+
+        min-height: calc(100vh - 110px);
+
+        padding: 30px 15px;
+    }
+
+
+    .auth-card {
+
+        padding: 30px 21px;
+
+        border-radius: 18px;
+    }
+
+
+    .auth-header h1 {
+
+        font-size: 24px;
+    }
+
+
+    .auth-header p {
+
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   PETIT TELEPHONE
+   ========================================================= */
+
+@media (max-width: 360px) {
+
+    .auth-page {
+
+        padding: 20px 10px;
+    }
+
+
+    .auth-card {
+
+        padding: 25px 17px;
+    }
+
+
+    .auth-logo {
+
+        width: 52px;
+
+        height: 52px;
+
+        font-size: 20px;
+    }
+
+
+    .auth-header h1 {
+
+        font-size: 22px;
+    }
+
+
+    .auth-form input {
+
+        height: 48px;
+    }
+
+
+    .auth-button {
+
+        min-height: 49px;
+    }
+
+}

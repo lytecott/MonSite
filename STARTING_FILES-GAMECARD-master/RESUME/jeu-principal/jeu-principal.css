@@ -1,0 +1,367 @@
+@font-face {
+    font-family: "Beaumont";
+    src: url("../fonts/Catherine.ttf");
+}
+
+@font-face {
+    font-family: "elgoc";
+    src: url("../fonts/ElgocMedium.woff");
+}
+
+
+/* Général */
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    margin: 0;
+    padding: 0;
+
+    background-color: black;
+
+    min-height: 100vh;
+
+    color: white;
+
+}
+
+
+/* Logo */
+
+.logo {
+
+    font-family: Beaumont;
+
+    font-size: clamp(50px, 10vw, 100px);
+
+    text-align: center;
+
+    margin-top: 20px;
+
+}
+
+
+.logo a {
+
+    color:white;
+
+    text-decoration:none;
+
+}
+
+
+/* Bouton RESET */
+
+form {
+
+    text-align:center;
+
+    margin-top:20px;
+
+}
+
+
+button {
+
+    background-color:#e74c3c;
+
+    color:white;
+
+    border:none;
+
+    padding:12px 35px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    font-family:elgoc;
+
+    transition:0.3s;
+
+}
+
+
+button:hover {
+
+    background-color:#c0392b;
+
+    transform:scale(1.05);
+
+}
+
+
+
+/* GIF */
+
+.gif {
+
+    margin-top:30px;
+
+}
+
+
+.gif img {
+
+    max-width:300px;
+
+    width:80%;
+
+}
+
+
+
+/* Les cartes */
+
+.cards {
+
+    text-align:center;
+
+    margin-top:40px;
+
+}
+
+
+
+/* Chaque thème */
+
+.histoire,
+.sport,
+.culture,
+.sciences {
+
+
+    display:inline-flex;
+
+
+    width:40%;
+
+    max-width:400px;
+
+    height:100px;
+
+
+    margin:15px;
+
+
+    border-radius:25px;
+
+
+    justify-content:center;
+
+    align-items:center;
+
+
+    font-family:elgoc;
+
+    font-size:35px;
+
+
+    transition:0.3s;
+
+
+}
+
+
+
+/* Couleurs des cartes */
+
+.histoire {
+
+    background:linear-gradient(45deg,#8e44ad,#c39bd3);
+
+}
+
+
+.sport {
+
+    background:linear-gradient(45deg,#27ae60,#82e0aa);
+
+}
+
+
+.culture {
+
+    background:linear-gradient(45deg,#2980b9,#85c1e9);
+
+}
+
+
+.sciences {
+
+    background:linear-gradient(45deg,#d35400,#f5b041);
+
+}
+
+
+
+.histoire:hover,
+.sport:hover,
+.culture:hover,
+.sciences:hover {
+
+
+    transform:scale(1.08);
+
+    box-shadow:0 0 20px white;
+
+
+}
+
+
+
+a {
+
+    text-decoration:none;
+
+    color:white;
+
+}
+
+
+
+a:visited {
+
+    color:white;
+
+}
+
+
+
+a:hover {
+
+    color:orchid;
+
+}
+
+
+
+/* ===================== */
+/* TABLETTE */
+/* ===================== */
+
+
+@media screen and (max-width:900px){
+
+
+    .histoire,
+    .sport,
+    .culture,
+    .sciences {
+
+
+        width:80%;
+
+        height:90px;
+
+        font-size:30px;
+
+    }
+
+
+}
+
+
+
+/* ===================== */
+/* TELEPHONE */
+/* ===================== */
+
+
+@media screen and (max-width:600px){
+
+
+    .logo {
+
+        font-size:60px;
+
+    }
+
+
+    .gif img {
+
+        width:70%;
+
+    }
+
+
+    .histoire,
+    .sport,
+    .culture,
+    .sciences {
+
+
+        width:90%;
+
+        height:75px;
+
+        margin:10px;
+
+        font-size:25px;
+
+
+        border-radius:15px;
+
+    }
+
+
+
+    button {
+
+        padding:10px 25px;
+
+        font-size:16px;
+
+    }
+
+
+}
+.message-reset{
+
+background:#27ae60;
+
+color:white;
+
+width:300px;
+
+margin:20px auto;
+
+padding:15px;
+
+text-align:center;
+
+border-radius:15px;
+
+font-size:20px;
+
+animation:fade 0.5s;
+
+}
+
+
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+
+transform:translateY(-20px);
+
+}
+
+
+to{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}

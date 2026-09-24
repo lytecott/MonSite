@@ -1,0 +1,330 @@
+<?php
+require 'database.php';
+
+// Initialisation des variables
+$id = null;
+$nameError = $descriptionError = $priceError = $categoryError = $imageError = '';
+$name = $description = $price = $category = $image = '';
+
+// Vérification de l'ID dans l'URL
+if (!empty($_GET['id'])) {
+    $id = checkInput($_GET['id']);
+    if (!is_numeric($id)) {
+        header("Location: index.php");
+        exit();
+    }
+} else {
+    header("Location: index.php");
+    exit();
+}
+
+// Traitement du formulaire
+if (!empty($_POST)) {
+    $name = checkInput($_POST['name']);
+    $description = checkInput($_POST['description']);
+    $price = checkInput($_POST['price']);
+    $category = checkInput($_POST['category']);
+    
+    $isSuccess = true;
+    
+    // Validation des champs
+    if (empty($name)) {
+        $nameError = 'Ce champ ne peut pas être vide';
+        $isSuccess = false;
+    }
+    if (empty($description)) {
+        $descriptionError = 'Ce champ ne peut pas être vide';
+        $isSuccess = false;
+    }
+    if (empty($price) || !is_numeric($price) || $price <= 0) {
+        $priceError = 'Veuillez entrer un prix valide';
+        $isSuccess = false;
+    }
+    if (empty($category)) {
+        $categoryError = 'Ce champ ne peut pas être vide';
+        $isSuccess = false;
+    }
+
+    // Gestion de l'image
+    $isImageUpdated = false;
+    $isUploadSuccess = true;
+    
+    if (!empty($_FILES["image"]["name"])) {
+        $isImageUpdated = true;
+        $image = checkInput($_FILES["image"]["name"]);
+        $imagePath = '../images/' . basename($image);
+        $imageExtension = strtolower(pathinfo($imagePath, PATHINFO_EXTENSION));
+        
+        // Extensions autorisées
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        if (!in_array($imageExtension, $allowedExtensions)) {
+            $imageError = "Les fichiers autorisés sont: .jpg, .jpeg, .png, .gif";
+            $isUploadSuccess = false;
+        }
+        
+        // Taille maximale (500 Ko)
+        if ($_FILES["image"]["size"] > 500000) {
+            $imageError = "Le fichier ne doit pas dépasser 500 Ko";
+            $isUploadSuccess = false;
+        }
+        
+        // Upload de l'image
+        if ($isUploadSuccess) {
+            if (!move_uploaded_file($_FILES["image"]["tmp_name"], $imagePath)) {
+                $imageError = "Erreur lors de l'upload de l'image";
+                $isUploadSuccess = false;
+            }
+        }
+    }
+
+    // Mise à jour en base de données
+    if ($isSuccess && ($isImageUpdated ? $isUploadSuccess : true)) {
+        $db = Database::connect();
+        
+        if ($isImageUpdated) {
+            $statement = $db->prepare("UPDATE items SET name = ?, description = ?, price = ?, category = ?, image = ? WHERE id = ?");
+            $statement->execute([$name, $description, $price, $category, $image, $id]);
+        } else {
+            $statement = $db->prepare("UPDATE items SET name = ?, description = ?, price = ?, category = ? WHERE id = ?");
+            $statement->execute([$name, $description, $price, $category, $id]);
+        }
+        
+        Database::disconnect();
+        header("Location: index.php");
+        exit();
+    } else if ($isImageUpdated && !$isUploadSuccess) {
+        // Si l'upload a échoué, on récupère les données existantes
+        $db = Database::connect();
+        $statement = $db->prepare("SELECT * FROM items WHERE id = ?");
+        $statement->execute([$id]);
+        $item = $statement->fetch(PDO::FETCH_ASSOC);
+        Database::disconnect();
+        
+        $image = $item['image'];
+    }
+} else {
+    // Chargement des données existantes
+    $db = Database::connect();
+    $statement = $db->prepare("SELECT * FROM items WHERE id = ?");
+    $statement->execute([$id]);
+    $item = $statement->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$item) {
+        header("Location: index.php");
+        exit();
+    }
+    
+    $name = $item['name'];
+    $description = $item['description'];
+    $price = $item['price'];
+    $category = $item['category'];
+    $image = $item['image'];
+    Database::disconnect();
+}
+
+// Fonction de nettoyage des entrées
+function checkInput($data) {
+    if (is_array($data)) {
+        return array_map('checkInput', $data);
+    }
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+    return $data;
+}
+
+// Récupération des catégories pour le select
+$db = Database::connect();
+$categories = $db->query('SELECT id, name FROM categories')->fetchAll(PDO::FETCH_ASSOC);
+Database::disconnect();
+?>
+
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <title>Burger Code - Modifier un item</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <!-- Préchargement des ressources -->
+        <link rel="preconnect" href="https://cdn.jsdelivr.net">
+        <link rel="preconnect" href="https://ajax.googleapis.com">
+        
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
+              rel="stylesheet" 
+              integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
+              crossorigin="anonymous">
+        
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
+        
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Holtwood+One+SC&display=swap" rel="stylesheet">
+        
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="../css/styles.css">
+        
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    </head>
+
+    <body>
+        <div class="container-fluid p-0">
+            <header class="text-center py-4 bg-light">
+                <h1 class="text-logo m-0"><span class="bi bi-shop"></span> Burger Code <span class="bi bi-shop"></span></h1>
+            </header>
+        </div>
+
+        <div class="container admin my-5">
+            <div class="row">
+                <div class="col-md-6">
+                    <h1 class="mb-4"><strong>Modifier un item</strong></h1>
+                    
+                    <form class="form" 
+                          action="update.php?id=<?php echo $id; ?>" 
+                          role="form" 
+                          method="post" 
+                          enctype="multipart/form-data">
+
+                        <!-- Champ Nom -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom <span class="text-danger">*</span></label>
+                            <input type="text" 
+                                   class="form-control <?php echo !empty($nameError) ? 'is-invalid' : ''; ?>" 
+                                   id="name" 
+                                   name="name" 
+                                   placeholder="Nom de l'item" 
+                                   value="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" 
+                                   required>
+                            <?php if (!empty($nameError)): ?>
+                                <div class="invalid-feedback"><?php echo $nameError; ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Champ Description -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description <span class="text-danger">*</span></label>
+                            <textarea class="form-control <?php echo !empty($descriptionError) ? 'is-invalid' : ''; ?>" 
+                                      id="description" 
+                                      name="description" 
+                                      placeholder="Description de l'item" 
+                                      rows="3" 
+                                      required><?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?></textarea>
+                            <?php if (!empty($descriptionError)): ?>
+                                <div class="invalid-feedback"><?php echo $descriptionError; ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Champ Prix -->
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Prix (en €) <span class="text-danger">*</span></label>
+                            <input type="number" 
+                                   step="0.01" 
+                                   min="0.01" 
+                                   class="form-control <?php echo !empty($priceError) ? 'is-invalid' : ''; ?>" 
+                                   id="price" 
+                                   name="price" 
+                                   placeholder="0.00" 
+                                   value="<?php echo htmlspecialchars($price, ENT_QUOTES, 'UTF-8'); ?>" 
+                                   required>
+                            <?php if (!empty($priceError)): ?>
+                                <div class="invalid-feedback"><?php echo $priceError; ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Champ Catégorie -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label">Catégorie <span class="text-danger">*</span></label>
+                            <select class="form-select <?php echo !empty($categoryError) ? 'is-invalid' : ''; ?>" 
+                                    id="category" 
+                                    name="category" 
+                                    required>
+                                <option value="">-- Sélectionnez une catégorie --</option>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?php echo $cat['id']; ?>" 
+                                        <?php echo ($cat['id'] == $category) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($cat['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <?php if (!empty($categoryError)): ?>
+                                <div class="invalid-feedback"><?php echo $categoryError; ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Champ Image -->
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image actuelle</label>
+                            <div class="mb-2">
+                                <?php if (!empty($image)): ?>
+                                    <img src="<?php echo '../images/' . htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>" 
+                                         alt="Image actuelle" 
+                                         class="img-thumbnail" 
+                                         style="max-height: 100px;">
+                                <?php else: ?>
+                                    <p class="text-muted">Aucune image</p>
+                                <?php endif; ?>
+                            </div>
+                            <label for="image" class="form-label">Nouvelle image (optionnelle)</label>
+                            <input type="file" 
+                                   class="form-control <?php echo !empty($imageError) ? 'is-invalid' : ''; ?>" 
+                                   id="image" 
+                                   name="image" 
+                                   accept=".jpg,.jpeg,.png,.gif">
+                            <div class="form-text">Fichiers autorisés : JPG, JPEG, PNG, GIF (max 500 Ko)</div>
+                            <?php if (!empty($imageError)): ?>
+                                <div class="invalid-feedback"><?php echo $imageError; ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success">
+                                <span class="bi bi-pencil-fill"></span> Modifier
+                            </button>
+                            <a class="btn btn-outline-secondary" href="index.php">
+                                <span class="bi bi-arrow-left"></span> Retour
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Aperçu -->
+                <div class="col-md-6 site">
+                    <div class="card h-100">
+                        <div class="img-thumbnail p-3">
+                            <?php if (!empty($image)): ?>
+                                <img src="<?php echo '../images/' . htmlspecialchars($image, ENT_QUOTES, 'UTF-8'); ?>" 
+                                     alt="<?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?>" 
+                                     class="img-fluid rounded">
+                            <?php else: ?>
+                                <div class="bg-light d-flex align-items-center justify-content-center" 
+                                     style="height: 200px; background-color: #f8f9fa;">
+                                    <span class="text-muted">Aucune image disponible</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h4 class="card-title mb-0"><?php echo htmlspecialchars($name, ENT_QUOTES, 'UTF-8'); ?></h4>
+                                <div class="price bg-primary text-white px-3 py-1 rounded">
+                                    <?php echo number_format((float)$price, 2, ',', ' '); ?> €
+                                </div>
+                            </div>
+                            <p class="card-text"><?php echo htmlspecialchars($description, ENT_QUOTES, 'UTF-8'); ?></p>
+                            <a href="#" class="btn btn-order btn-primary w-100">
+                                <span class="bi bi-cart-fill"></span> Commander
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+                crossorigin="anonymous"></script>
+    </body>
+</html>
