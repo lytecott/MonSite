@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Créer un compte{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-page">
+
+
+<div class="auth-card">
+
+    <div class="auth-logo">
+        AB
+    </div>
+
+    <div class="auth-header">
+        <h1>Créer un compte</h1>
+        <p>Rejoignez-nous et créez votre compte gratuitement.</p>
+    </div>
+
+    {% if messages %}
+        <div class="auth-messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        <div class="form-error">
+            {% for error in form.non_field_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'signup' %}" class="auth-form">
+        {% csrf_token %}
+
+        {% for field in form %}
+
+            <div class="form-group">
+
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.help_text %}
+                    <small class="help-text">
+                        {{ field.help_text|safe }}
+                    </small>
+                {% endif %}
+
+                {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+        <button type="submit" class="auth-button">
+            Créer mon compte
+        </button>
+
+    </form>
+
+    <div class="auth-footer">
+
+        <p>
+            Vous avez déjà un compte ?
+            <a href="{% url 'login' %}">
+                Se connecter
+            </a>
+        </p>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Liste des utilisateurs</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom d'utilisateur</th>
+            <th>Email</th>
+            <th>Dernière connexion</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.profile.last_connection|date:"d/m/Y H:i"|default:"Jamais" }}</td>
+            <td>{% if user.is_active %}Actif{% else %}Désactivé{% endif %}</td>
+            <td>
+                <a href="{% url 'edit_user' user.id %}">Modifier</a>
+                <a href="{% url 'reset_password' user.id %}">Réinitialiser MDP</a>
+                <a href="{% url 'delete_user' user.id %}" onclick="return confirm('Voulez-vous vraiment supprimer cet utilisateur ?');"> Supprimer </a>
+                <a href="{% url 'disable_user' user.id %}" style="color: {% if user.is_active %}red{% else %}green{% endif %};">
+                    {% if user.is_active %}Désactiver{% else %}Activer{% endif %}
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
