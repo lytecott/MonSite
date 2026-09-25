@@ -1,0 +1,361 @@
+<?php
+/**
+ * Classe Auth
+ * Gère l'authentification, l'inscription, la déconnexion et la gestion des utilisateurs.
+ */
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require __DIR__ . '/database.php';
+
+class Auth {
+    
+    /**
+     * Vérifie si l'utilisateur est connecté.
+     *
+     * @return bool True si l'utilisateur est connecté, false sinon
+     */
+    public static function isLoggedIn(): bool {
+        return isset($_SESSION['user_id']);
+    }
+
+    /**
+     * Récupère l'ID de l'utilisateur connecté.
+     *
+     * @return int|null L'ID de l'utilisateur ou null s'il n'est pas connecté
+     */
+    public static function getUserId(): ?int {
+        return $_SESSION['user_id'] ?? null;
+    }
+
+    /**
+     * Récupère le nom d'utilisateur de l'utilisateur connecté.
+     *
+     * @return string|null Le nom d'utilisateur ou null s'il n'est pas connecté
+     */
+    public static function getUsername(): ?string {
+        return $_SESSION['username'] ?? null;
+    }
+
+    /**
+     * Récupère la photo de profil de l'utilisateur connecté.
+     *
+     * @return string|null L'URL de la photo de profil ou null s'il n'est pas connecté
+     */
+    public static function getProfilePicture(): ?string {
+        return $_SESSION['profile_picture'] ?? null;
+    }
+
+    /**
+     * Connecte un utilisateur.
+     *
+     * @param string $username Nom d'utilisateur
+     * @param string $password Mot de passe
+     * @return bool True si la connexion a réussi, false sinon
+     */
+    public static function login(string $username, string $password): bool {
+        try {
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT id, username, password, profile_picture, email FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['profile_picture'] = $user['profile_picture'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['logged_in_at'] = time(); // Horodatage de la connexion
+                return true;
+            }
+            return false;
+        } catch (PDOException $e) {
+            error_log("Erreur de connexion : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Déconnecte l'utilisateur actuel.
+     */
+    public static function logout(): void {
+        session_unset();
+        session_destroy();
+    }
+
+    /**
+     * Inscrit un nouvel utilisateur.
+     *
+     * @param string $username Nom d'utilisateur
+     * @param string $password Mot de passe
+     * @param string $email Adresse e-mail
+     * @param string|null $phone Numéro de téléphone (optionnel)
+     * @param string|null $profilePicture Photo de profil (optionnel)
+     * @return bool True si l'inscription a réussi, false sinon
+     */
+    public static function register(
+        string $username,
+        string $password,
+        string $email,
+        ?string $phone = null,
+        ?string $profilePicture = null
+    ): bool {
+        try {
+            $db = Database::connect();
+            
+            // Vérifier si l'utilisateur ou l'email existe déjà
+            $stmt = $db->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+            $stmt->execute([$username, $email]);
+            if ($stmt->fetch()) {
+                return false; // Utilisateur ou email déjà existant
+            }
+
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $db->prepare(
+                "INSERT INTO users (username, password, email, phone, profile_picture, created_at) 
+                 VALUES (?, ?, ?, ?, ?, NOW())"
+            );
+            return $stmt->execute([$username, $hashedPassword, $email, $phone, $profilePicture]);
+        } catch (PDOException $e) {
+            error_log("Erreur d'inscription : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Met à jour les informations d'un utilisateur.
+     *
+     * @param int $userId ID de l'utilisateur
+     * @param string $username Nom d'utilisateur
+     * @param string $email Adresse e-mail
+     * @param string|null $phone Numéro de téléphone (optionnel)
+     * @param string|null $profilePicture Photo de profil (optionnel)
+     * @return bool True si la mise à jour a réussi, false sinon
+     */
+    public static function updateUser(
+        int $userId,
+        string $username,
+        string $email,
+        ?string $phone = null,
+        ?string $profilePicture = null
+    ): bool {
+        try {
+            $db = Database::connect();
+            
+            if ($profilePicture) {
+                $stmt = $db->prepare(
+                    "UPDATE users SET username = ?, email = ?, phone = ?, profile_picture = ? WHERE id = ?"
+                );
+                return $stmt->execute([$username, $email, $phone, $profilePicture, $userId]);
+            } else {
+                $stmt = $db->prepare(
+                    "UPDATE users SET username = ?, email = ?, phone = ? WHERE id = ?"
+                );
+                return $stmt->execute([$username, $email, $phone, $userId]);
+            }
+        } catch (PDOException $e) {
+            error_log("Erreur de mise à jour de l'utilisateur : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Met à jour le mot de passe d'un utilisateur.
+     *
+     * @param int $userId ID de l'utilisateur
+     * @param string $newPassword Nouveau mot de passe
+     * @return bool True si la mise à jour a réussi, false sinon
+     */
+    public static function updatePassword(int $userId, string $newPassword): bool {
+        try {
+            $db = Database::connect();
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $stmt = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
+            return $stmt->execute([$hashedPassword, $userId]);
+        } catch (PDOException $e) {
+            error_log("Erreur de mise à jour du mot de passe : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Supprime un utilisateur.
+     *
+     * @param int $userId ID de l'utilisateur
+     * @return bool True si la suppression a réussi, false sinon
+     */
+    public static function deleteUser(int $userId): bool {
+        try {
+            $db = Database::connect();
+            $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
+            return $stmt->execute([$userId]);
+        } catch (PDOException $e) {
+            error_log("Erreur de suppression de l'utilisateur : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Récupère un utilisateur par son ID.
+     *
+     * @param int $userId ID de l'utilisateur
+     * @return array|null Tableau associatif représentant l'utilisateur ou null si non trouvé
+     */
+    public static function getUserById(int $userId): ?array {
+        try {
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT * FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            error_log("Erreur de récupération de l'utilisateur : " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Récupère un utilisateur par son nom d'utilisateur.
+     *
+     * @param string $username Nom d'utilisateur
+     * @return array|null Tableau associatif représentant l'utilisateur ou null si non trouvé
+     */
+    public static function getUserByUsername(string $username): ?array {
+        try {
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            error_log("Erreur de récupération de l'utilisateur : " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Vérifie si un nom d'utilisateur est disponible.
+     *
+     * @param string $username Nom d'utilisateur
+     * @return bool True si le nom est disponible, false sinon
+     */
+    public static function isUsernameAvailable(string $username): bool {
+        try {
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT id FROM users WHERE username = ?");
+            $stmt->execute([$username]);
+            return !$stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Erreur de vérification du nom d'utilisateur : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Vérifie si une adresse e-mail est disponible.
+     *
+     * @param string $email Adresse e-mail
+     * @return bool True si l'email est disponible, false sinon
+     */
+    public static function isEmailAvailable(string $email): bool {
+        try {
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT id FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            return !$stmt->fetch();
+        } catch (PDOException $e) {
+            error_log("Erreur de vérification de l'email : " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Récupère tous les utilisateurs.
+     *
+     * @return array Tableau de tableaux associatifs représentant les utilisateurs
+     */
+    public static function getAllUsers(): array {
+        try {
+            $db = Database::connect();
+            $stmt = $db->query("SELECT * FROM users");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Erreur de récupération des utilisateurs : " . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Vérifie si le mot de passe actuel est correct pour l'utilisateur connecté.
+     *
+     * @param string $currentPassword Mot de passe actuel
+     * @return bool True si le mot de passe est correct, false sinon
+     */
+    public static function verifyCurrentPassword(string $currentPassword): bool {
+        if (!self::isLoggedIn()) {
+            return false;
+        }
+
+        try {
+            $userId = self::getUserId();
+            $db = Database::connect();
+            $stmt = $db->prepare("SELECT password FROM users WHERE id = ?");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $user && password_verify($currentPassword, $user['password']);
+        } catch (PDOException $e) {
+            error_log("Erreur de vérification du mot de passe : " . $e->getMessage());
+            return false;
+        }
+    }
+}
+
+// Fonction de compatibilité pour les anciens appels (si nécessaire)
+if (!function_exists('isLoggedIn')) {
+    function isLoggedIn() {
+        return Auth::isLoggedIn();
+    }
+}
+
+if (!function_exists('login')) {
+    function login($username, $password) {
+        return Auth::login($username, $password);
+    }
+}
+
+if (!function_exists('logout')) {
+    function logout() {
+        Auth::logout();
+    }
+}
+
+if (!function_exists('register')) {
+    function register($username, $password, $email, $phone = null, $profilePicture = null) {
+        return Auth::register($username, $password, $email, $phone, $profilePicture);
+    }
+}
+
+if (!function_exists('updateUser')) {
+    function updateUser($userId, $username, $email, $phone = null, $profilePicture = null) {
+        return Auth::updateUser($userId, $username, $email, $phone, $profilePicture);
+    }
+}
+
+if (!function_exists('deleteUser')) {
+    function deleteUser($userId) {
+        return Auth::deleteUser($userId);
+    }
+}
+
+if (!function_exists('getUserById')) {
+    function getUserById($userId) {
+        return Auth::getUserById($userId);
+    }
+}
+
+if (!function_exists('updatePassword')) {
+    function updatePassword($userId, $newPassword) {
+        return Auth::updatePassword($userId, $newPassword);
+    }
+}

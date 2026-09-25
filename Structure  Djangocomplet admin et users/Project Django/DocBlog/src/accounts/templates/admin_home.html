@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>
+    Administration
+</h1>
+
+<p>
+    Bienvenue {{ user.username }}.
+</p>
+
+<div class="dashboard">
+
+    <a
+        href="{% url 'user_list' %}"
+        class="card"
+    >
+        Gérer les utilisateurs
+    </a>
+
+    <a
+        href="/admin/"
+        class="card"
+    >
+        Django Admin
+    </a>
+
+    <a
+        href="{% url 'profile' %}"
+        class="card"
+    >
+        Mon profil
+    </a>
+
+</div>
+
+{% endblock %}
